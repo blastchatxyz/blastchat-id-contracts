@@ -33,7 +33,13 @@ describe(".scrolly minting contract", function () {
   let developer;
 
   beforeEach(async function () {
-    [signer, user1, user2, owner, pool, developer] = await ethers.getSigners();
+    [signer, user1, user2, owner, pool, developer, feeReceiver] = await ethers.getSigners();
+
+    const MockBlast = await ethers.getContractFactory("MockBlast");
+    const blastContract = await MockBlast.deploy();
+
+    const BlastGovernor = await ethers.getContractFactory("BlastGovernor");
+    const blastGovernorContract = await BlastGovernor.deploy(blastContract.address, feeReceiver.address);
 
     //----
     const PunkForbiddenTlds = await ethers.getContractFactory("PunkForbiddenTlds");
@@ -43,22 +49,31 @@ describe(".scrolly minting contract", function () {
     const flexiMetadataContract = await FlexiPunkMetadata.deploy();
 
     const PunkTLDFactory = await ethers.getContractFactory("FlexiPunkTLDFactory");
-    const priceToCreateTld = ethers.utils.parseUnits("100", "ether");
-    const factoryContract = await PunkTLDFactory.deploy(priceToCreateTld, forbTldsContract.address, flexiMetadataContract.address);
+    factoryContract = await PunkTLDFactory.deploy(
+      ethers.utils.parseUnits(String(tldPrice), "ether"), // domain price
+      blastContract.address, // blast
+      forbTldsContract.address, 
+      blastGovernorContract.address, // gov
+      flexiMetadataContract.address
+    );
 
     await forbTldsContract.addFactoryAddress(factoryContract.address);
 
-    const PunkTLD = await ethers.getContractFactory("FlexiPunkTLD");
-    tldContract = await PunkTLD.deploy(
-      tldName,
-      tldSymbol,
+    // create a new TLD via the factory (owner create TLD function)
+    await factoryContract.ownerCreateTld(
+      tldName, // domain name
+      tldSymbol, // domain symbol
       signer.address, // TLD owner
-      tldPrice,
-      true,
-      tldRoyalty,
-      factoryContract.address,
-      flexiMetadataContract.address
+      ethers.utils.parseUnits(String(tldPrice), "ether"), // domain price
+      true, // buying enabled
     );
+
+    // get the TLD contract address from the factory contract (tldNamesAddresses)
+    const tldAddress = await factoryContract.tldNamesAddresses(tldName);
+
+    // get the TLD contract
+    const PunkTLD = await ethers.getContractFactory("FlexiPunkTLD");
+    tldContract = await PunkTLD.attach(tldAddress);
 
     // transfer TLD ownership to owner
     await tldContract.transferOwnership(owner.address);

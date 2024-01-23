@@ -60,7 +60,13 @@ describe("Template: MinterWithBroker contract", function () {
 
     const PunkTLDFactory = await ethers.getContractFactory("FlexiPunkTLDFactory");
     const priceToCreateTld = ethers.utils.parseUnits("100", "ether");
-    const factoryContract = await PunkTLDFactory.deploy(priceToCreateTld, forbTldsContract.address, flexiMetadataContract.address);
+    const factoryContract = await PunkTLDFactory.deploy(
+      priceToCreateTld, 
+      blastContract.address, // blast
+      forbTldsContract.address, 
+      blastGovernorContract.address, // gov
+      flexiMetadataContract.address
+    );
 
     await forbTldsContract.addFactoryAddress(factoryContract.address);
 

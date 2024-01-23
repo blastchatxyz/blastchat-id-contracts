@@ -16,8 +16,8 @@ describe("FlexiPunkTLD (onlyOwner)", function () {
   let metadataContract1;
   let metadataContract2;
 
-  const domainName = ".web3";
-  const domainSymbol = "WEB3";
+  const domainName = ".blastchat";
+  const domainSymbol = ".BLASTCHAT";
   const domainPrice = ethers.utils.parseUnits("1", "ether");
   const domainRoyalty = 0; // royalty in bips
 
@@ -38,10 +38,33 @@ describe("FlexiPunkTLD (onlyOwner)", function () {
     metadataContract2 = await FlexiPunkMetadata.deploy(blastContract.address, blastGovernorContract.address);
 
     const PunkTLDFactory = await ethers.getContractFactory("FlexiPunkTLDFactory");
-    factoryContract = await PunkTLDFactory.deploy(domainPrice, forbTldsContract.address, metadataContract1.address);
+    factoryContract = await PunkTLDFactory.deploy(
+      domainPrice, 
+      blastContract.address, // blast
+      forbTldsContract.address, 
+      blastGovernorContract.address, // gov
+      metadataContract1.address
+    );
 
     await forbTldsContract.addFactoryAddress(factoryContract.address);
 
+    // create a new TLD via the factory (owner create TLD function)
+    await factoryContract.ownerCreateTld(
+      domainName, // domain name
+      domainSymbol, // domain symbol
+      signer.address, // TLD owner
+      domainPrice, // domain price
+      false, // buying enabled
+    );
+
+    // get the TLD contract address from the factory contract (tldNamesAddresses)
+    const tldAddress = await factoryContract.tldNamesAddresses(domainName);
+
+    // get the TLD contract
+    const PunkTLD = await ethers.getContractFactory("FlexiPunkTLD");
+    contract = await PunkTLD.attach(tldAddress);
+
+    /*
     const PunkTLD = await ethers.getContractFactory("FlexiPunkTLD");
     contract = await PunkTLD.deploy(
       domainName,
@@ -53,6 +76,7 @@ describe("FlexiPunkTLD (onlyOwner)", function () {
       factoryContract.address,
       metadataContract1.address
     );
+    */
   });
 
   it("should create a new valid domain as owner even if buying is disabled", async function () {

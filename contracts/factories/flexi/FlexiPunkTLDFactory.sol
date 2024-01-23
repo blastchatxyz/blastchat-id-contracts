@@ -8,6 +8,11 @@ import "./FlexiPunkTLD.sol";
 import "../../interfaces/IBasePunkTLDFactory.sol";
 import "../../interfaces/IPunkForbiddenTlds.sol";
 
+interface IBlast {
+  function configureClaimableGas() external;
+  function configureGovernor(address _governor) external;
+}
+
 /// @title Punk Domains TLD Factory contract (Flexi)
 /// @author Tempe Techie
 /// @notice Factory contract dynamically generates new TLD contracts.
@@ -30,9 +35,13 @@ contract FlexiPunkTLDFactory is IBasePunkTLDFactory, Ownable, ReentrancyGuard {
 
   constructor(
     uint256 _price, 
+    address _blast,
     address _forbiddenTlds,
+    address _gov,
     address _metadataAddress
   ) {
+    IBlast(_blast).configureClaimableGas();
+    IBlast(_blast).configureGovernor(_gov);
     price = _price;
     forbiddenTlds = _forbiddenTlds;
     metadataAddress = _metadataAddress;

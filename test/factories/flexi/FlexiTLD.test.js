@@ -54,21 +54,31 @@ describe("FlexiPunkTLD", function () {
     metadataContract = await FlexiPunkMetadata.deploy(blastContract.address, blastGovernorContract.address);
 
     const PunkTLDFactory = await ethers.getContractFactory("FlexiPunkTLDFactory");
-    factoryContract = await PunkTLDFactory.deploy(domainPrice, forbTldsContract.address, metadataContract.address);
+    factoryContract = await PunkTLDFactory.deploy(
+      domainPrice, 
+      blastContract.address, // blast
+      forbTldsContract.address, 
+      blastGovernorContract.address, // gov
+      metadataContract.address
+    );
 
     await forbTldsContract.addFactoryAddress(factoryContract.address);
 
-    const PunkTLD = await ethers.getContractFactory("FlexiPunkTLD");
-    contract = await PunkTLD.deploy(
-      domainName,
-      domainSymbol,
+    // create a new TLD via the factory (owner create TLD function)
+    await factoryContract.ownerCreateTld(
+      domainName, // domain name
+      domainSymbol, // domain symbol
       signer.address, // TLD owner
-      domainPrice,
+      domainPrice, // domain price
       false, // buying enabled
-      domainRoyalty,
-      factoryContract.address,
-      metadataContract.address
     );
+
+    // get the TLD contract address from the factory contract (tldNamesAddresses)
+    const tldAddress = await factoryContract.tldNamesAddresses(domainName);
+
+    // get the TLD contract
+    const PunkTLD = await ethers.getContractFactory("FlexiPunkTLD");
+    contract = await PunkTLD.attach(tldAddress);
   });
 
   it("should confirm the correct TLD name", async function () {

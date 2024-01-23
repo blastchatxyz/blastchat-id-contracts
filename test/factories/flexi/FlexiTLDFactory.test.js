@@ -31,11 +31,18 @@ describe("FlexiPunkTLDFactory", function () {
 
     const FlexiPunkMetadata = await ethers.getContractFactory("FlexiPunkMetadata");
     const metadataContract = await FlexiPunkMetadata.deploy(blastContract.address, blastGovernorContract.address);
-
     const PunkTLDFactory = await ethers.getContractFactory("FlexiPunkTLDFactory");
-    contract = await PunkTLDFactory.deploy(tldPrice, forbTldsContract.address, metadataContract.address);
+    
+    contract = await PunkTLDFactory.deploy(
+      tldPrice, 
+      blastContract.address, // blast
+      forbTldsContract.address, 
+      blastGovernorContract.address, // gov
+      metadataContract.address
+    );
 
     await forbTldsContract.addFactoryAddress(contract.address);
+
   });
 
   it("should confirm forbidden TLD names defined in the constructor", async function () {
