@@ -1,9 +1,9 @@
-// npx hardhat run scripts/factories/flexi/callMethods.js --network satoshivmTestnet
+// npx hardhat run scripts/blast/other/callMethods.js --network blastSepolia
 
-const forbiddenAddress = "0xF51F7a532a2AaDFE8E2320bf5BA8275503bB3789";
-const factoryAddress = "0xeA2f99fE93E5D07F61334C5Eb9c54c5D5C957a6a";
+const forbiddenAddress = "";
+const factoryAddress = "";
 const tldAddress = "";
-const metadataAddress = "0xC6c17896fa051083324f2aD0Ed4555dC46D96E7f";
+const metadataAddress = "";
 
 const domainPrice = ethers.utils.parseUnits("0.000001", "ether");
 

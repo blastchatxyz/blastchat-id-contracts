@@ -2,18 +2,18 @@
 pragma solidity ^0.8.4;
 
 import { Base64 } from "base64-sol/base64.sol";
-import { OwnableWithManagers } from "../../access/OwnableWithManagers.sol";
+import { OwnableWithManagers } from "../access/OwnableWithManagers.sol";
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
-import "../../lib/strings.sol";
+import "../lib/strings.sol";
 
-/// @title Domain metadata contract
+/// @title Blast Chat ID metadata contract
 /// @author Tempe Techie
 /// @notice Contract that stores metadata for a TLD
-contract BasedTldMetadata is OwnableWithManagers {
-  string public description = "The official web3 name and digital identity of the Based DAO web3 community.";
-  string public brand = "Based DAO";
-  string public colorLeft = "#155BFC";
-  string public colorRight = "#155BFC";
+contract BlastChatIdMetadata is OwnableWithManagers {
+  string public description = "The official web3 name and digital identity of the Blast Chat web3 community.";
+  string public brand = "BlastChat.xyz";
+  string public colorLeft = "#FCFC03";
+  string public colorRight = "#191818";
 
   // EVENTS
   event DescriptionChanged(address indexed user, string description);
@@ -42,8 +42,8 @@ contract BasedTldMetadata is OwnableWithManagers {
         '<stop offset="0%" style="stop-color:',colorLeft,';stop-opacity:1" />',
         '<stop offset="100%" style="stop-color:',colorRight,';stop-opacity:1" /></linearGradient></defs>',
         '<rect x="0" y="0" width="500" height="500" fill="url(#grad)"/>',
-        '<text x="50%" y="50%" dominant-baseline="middle" fill="white" text-anchor="middle" font-size="x-large">',
-        _fullDomainName,'</text><text x="50%" y="70%" dominant-baseline="middle" fill="white" text-anchor="middle">',
+        '<text x="50%" y="50%" dominant-baseline="middle" fill="white" text-anchor="middle" font-size="x-large" font-family="monospace">',
+        _fullDomainName,'</text><text x="50%" y="70%" dominant-baseline="middle" fill="white" text-anchor="middle" font-family="monospace">',
         brand,'</text>',
       '</svg>'
     ))));

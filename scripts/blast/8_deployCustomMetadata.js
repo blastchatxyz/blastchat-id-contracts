@@ -1,10 +1,10 @@
 // Deploy FlexiPunkMetadata contract
-// npx hardhat run scripts/partners/scrolly/deployMetadata.js --network scroll
+// npx hardhat run scripts/blast/8_deployCustomMetadata.js --network blastSepolia
 
-const tldAddress = "0xc2C543D39426bfd1dB66bBde2Dd9E4a5c7212876";
+const tldAddress = "0x32749Ab66ef1B85aFfF3425d5766d8025E407769";
 
 async function main() {
-  const contractName = "ScrollyMetadata";
+  const contractName = "BlastChatIdMetadata";
 
   const [deployer] = await ethers.getSigners();
 
@@ -14,17 +14,18 @@ async function main() {
   // deploy contract
   const contract = await ethers.getContractFactory(contractName);
   const instance = await contract.deploy();
-  
+
+  await instance.deployed();
+
   console.log("Metadata contract address:", instance.address);
 
-  // create TLD contract instance (from FlexiPunkTLD)
-  const tldContract = await ethers.getContractAt("FlexiPunkTLD", tldAddress);
+  // add metadata contract address to the TLD contract
+  console.log("Adding metadata contract address to the TLD contract...");
+  const contractTld = await ethers.getContractFactory("FlexiPunkTLD");
+  const instanceTld = await contractTld.attach(tldAddress);
 
-  // set metadata contract address in the TLD contract via changeMetadataAddress()
-  const tx = await tldContract.changeMetadataAddress(instance.address);
-  await tx.wait();
-
-  console.log("Metadata contract address set in TLD contract");
+  const tx1 = await instanceTld.changeMetadataAddress(instance.address);
+  await tx1.wait();
 
   console.log("Wait a minute and then run this command to verify contracts on Etherscan:");
   console.log("npx hardhat verify --network " + network.name + " " + instance.address);
