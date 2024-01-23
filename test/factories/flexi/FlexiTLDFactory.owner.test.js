@@ -1,6 +1,12 @@
+// npx hardhat test test/factories/flexi/FlexiTLDFactory.owner.test.js
+
 const { expect } = require("chai");
 
 describe("FlexiPunkTLDFactory (onlyOwner)", function () {
+  let blastContract;
+  let blastGovernorContract;
+  let feeReceiver;
+
   let contract;
   let forbTldsContract;
   let owner;
@@ -9,13 +15,19 @@ describe("FlexiPunkTLDFactory (onlyOwner)", function () {
   const tldPrice = ethers.utils.parseUnits("1", "ether");
 
   beforeEach(async function () {
-    [owner, nonOwner] = await ethers.getSigners();
+    [owner, nonOwner, feeReceiver] = await ethers.getSigners();
+
+    const MockBlast = await ethers.getContractFactory("MockBlast");
+    blastContract = await MockBlast.deploy();
+
+    const BlastGovernor = await ethers.getContractFactory("BlastGovernor");
+    blastGovernorContract = await BlastGovernor.deploy(blastContract.address, feeReceiver.address);
 
     const PunkForbiddenTlds = await ethers.getContractFactory("PunkForbiddenTlds");
     forbTldsContract = await PunkForbiddenTlds.deploy();
 
     const FlexiPunkMetadata = await ethers.getContractFactory("FlexiPunkMetadata");
-    const metadataContract = await FlexiPunkMetadata.deploy();
+    const metadataContract = await FlexiPunkMetadata.deploy(blastContract.address, blastGovernorContract.address);
 
     const PunkTLDFactory = await ethers.getContractFactory("FlexiPunkTLDFactory");
     contract = await PunkTLDFactory.deploy(tldPrice, forbTldsContract.address, metadataContract.address);

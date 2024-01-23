@@ -30,13 +30,19 @@ describe("Template: MinterNftRequired contract", function () {
   let nftContract;
 
   beforeEach(async function () {
-    [signer, user1, user2, owner, broker] = await ethers.getSigners();
+    [signer, user1, user2, owner, broker, feeReceiver] = await ethers.getSigners();
+
+    const MockBlast = await ethers.getContractFactory("MockBlast");
+    const blastContract = await MockBlast.deploy();
+
+    const BlastGovernor = await ethers.getContractFactory("BlastGovernor");
+    const blastGovernorContract = await BlastGovernor.deploy(blastContract.address, feeReceiver.address);
 
     const PunkForbiddenTlds = await ethers.getContractFactory("PunkForbiddenTlds");
     const forbTldsContract = await PunkForbiddenTlds.deploy();
 
     const FlexiPunkMetadata = await ethers.getContractFactory("FlexiPunkMetadata");
-    const flexiMetadataContract = await FlexiPunkMetadata.deploy();
+    const flexiMetadataContract = await FlexiPunkMetadata.deploy(blastContract.address, blastGovernorContract.address);
 
     const PunkTLDFactory = await ethers.getContractFactory("FlexiPunkTLDFactory");
     const priceToCreateTld = ethers.utils.parseUnits("100", "ether");

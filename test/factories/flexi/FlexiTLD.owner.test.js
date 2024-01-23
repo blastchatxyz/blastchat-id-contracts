@@ -3,10 +3,16 @@
 const { expect } = require("chai");
 
 describe("FlexiPunkTLD (onlyOwner)", function () {
-  let contract;
-  let factoryContract;
+  let blastContract;
+  let blastGovernorContract;
+  let feeReceiver;
+
   let signer;
   let anotherUser;
+
+  let contract;
+  let factoryContract;
+
   let metadataContract1;
   let metadataContract2;
 
@@ -16,14 +22,20 @@ describe("FlexiPunkTLD (onlyOwner)", function () {
   const domainRoyalty = 0; // royalty in bips
 
   beforeEach(async function () {
-    [signer, anotherUser] = await ethers.getSigners();
+    [signer, anotherUser, feeReceiver] = await ethers.getSigners();
+
+    const MockBlast = await ethers.getContractFactory("MockBlast");
+    blastContract = await MockBlast.deploy();
+
+    const BlastGovernor = await ethers.getContractFactory("BlastGovernor");
+    blastGovernorContract = await BlastGovernor.deploy(blastContract.address, feeReceiver.address);
 
     const PunkForbiddenTlds = await ethers.getContractFactory("PunkForbiddenTlds");
     const forbTldsContract = await PunkForbiddenTlds.deploy();
 
     const FlexiPunkMetadata = await ethers.getContractFactory("FlexiPunkMetadata");
-    metadataContract1 = await FlexiPunkMetadata.deploy();
-    metadataContract2 = await FlexiPunkMetadata.deploy();
+    metadataContract1 = await FlexiPunkMetadata.deploy(blastContract.address, blastGovernorContract.address);
+    metadataContract2 = await FlexiPunkMetadata.deploy(blastContract.address, blastGovernorContract.address);
 
     const PunkTLDFactory = await ethers.getContractFactory("FlexiPunkTLDFactory");
     factoryContract = await PunkTLDFactory.deploy(domainPrice, forbTldsContract.address, metadataContract1.address);

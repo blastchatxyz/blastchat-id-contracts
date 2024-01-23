@@ -19,9 +19,14 @@ function calculateGasCosts(testName, receipt) {
 }
 
 describe("FlexiPunkTLD", function () {
+  let blastContract;
+  let blastGovernorContract;
+  let feeReceiver;
+
   let contract;
   let factoryContract;
   let metadataContract;
+
   let signer;
   let anotherUser;
   let referrer;
@@ -34,13 +39,19 @@ describe("FlexiPunkTLD", function () {
   const domainRoyalty = 10; // royalty in bips (10 bips is 0.1%)
 
   beforeEach(async function () {
-    [signer, anotherUser, referrer] = await ethers.getSigners();
+    [signer, anotherUser, referrer, feeReceiver] = await ethers.getSigners();
+
+    const MockBlast = await ethers.getContractFactory("MockBlast");
+    blastContract = await MockBlast.deploy();
+
+    const BlastGovernor = await ethers.getContractFactory("BlastGovernor");
+    blastGovernorContract = await BlastGovernor.deploy(blastContract.address, feeReceiver.address);
 
     const PunkForbiddenTlds = await ethers.getContractFactory("PunkForbiddenTlds");
     const forbTldsContract = await PunkForbiddenTlds.deploy();
 
     const FlexiPunkMetadata = await ethers.getContractFactory("FlexiPunkMetadata");
-    metadataContract = await FlexiPunkMetadata.deploy();
+    metadataContract = await FlexiPunkMetadata.deploy(blastContract.address, blastGovernorContract.address);
 
     const PunkTLDFactory = await ethers.getContractFactory("FlexiPunkTLDFactory");
     factoryContract = await PunkTLDFactory.deploy(domainPrice, forbTldsContract.address, metadataContract.address);

@@ -8,12 +8,15 @@ import { GasMode, IBlast } from "./IBlast.sol";
 /// @author Tempe Techie
 /// @notice Contract that governs Blast smart contract gas claims
 contract BlastGovernor is OwnableWithManagers {
-  address public blastAddress = 0x4300000000000000000000000000000000000002;
+  address public blastAddress; // 0x4300000000000000000000000000000000000002
   address public feeReceiver;
 
   // CONSTRUCTOR
-  constructor(address _feeReceiver) {
-    feeReceiver = _feeReceiver;
+  constructor(address blastAddress_, address feeReceiver_) {
+    IBlast(blastAddress_).configureClaimableGas();
+    
+    blastAddress = blastAddress_;
+    feeReceiver = feeReceiver_;
   }
 
   // READ
@@ -24,10 +27,8 @@ contract BlastGovernor is OwnableWithManagers {
   }
 
   // WRITE
-
-  // claim for one smart contract (anyone can call this function, the fee will be sent to the fee receiver)
   
-  /// @notice Claim only fully vested gas for a given smart contract
+  /// @notice Claim only fully vested gas for a given smart contract. Anyone can call this function, ETH will be sent to the fee receiver.
   function claimMaxGas(address _contractAddress) external {
     IBlast(blastAddress).claimMaxGas(_contractAddress, feeReceiver);
   }
@@ -47,9 +48,33 @@ contract BlastGovernor is OwnableWithManagers {
 
   // OWNER
 
-  // change fee receiver (onlyManagerOrOwner)
+  /// @notice Change blast address
+  function changeBlastAddress(address _newBlastAddress) external onlyManagerOrOwner {
+    IBlast(_newBlastAddress).configureClaimableGas();
+    blastAddress = _newBlastAddress;
+  }
 
-  // change governor in selected smart contracts array (onlyManagerOrOwner): configureGovernorOnBehalf
+  /// @notice Change fee receiver
+  function changeFeeReceiver(address _newFeeReceiver) external onlyManagerOrOwner {
+    feeReceiver = _newFeeReceiver;
+  }
+
+  /// @notice Change governor in a given smart contract
+  function changeGovernorInContract(address _newGovernor, address _contractAddress) external onlyManagerOrOwner {
+    IBlast(blastAddress).configureGovernorOnBehalf(_newGovernor, _contractAddress);
+  }
+
+  /// @notice Change governor in multiple smart contracts
+  function changeGovernorInMultipleContracts(address _newGovernor, address[] calldata _contractAddresses) external onlyManagerOrOwner {
+    uint256 cLength = _contractAddresses.length;
+
+    for (uint256 i = 0; i < cLength;) {
+      IBlast(blastAddress).configureGovernorOnBehalf(_newGovernor, _contractAddresses[i]);
+      unchecked {
+        i++;
+      }
+    }
+  }
 
   /// @notice More gas efficient version of claimMaxGasMultiple, but only owner/manager can call it due to unchecked
   function claimMaxGasMultipleOwner(address[] calldata _contractAddresses) external onlyManagerOrOwner {

@@ -12,9 +12,7 @@ interface IBlast {
 /// @title Punk Domains TLD Metadata contract (Flexi)
 /// @author Tempe Techie
 /// @notice Contract that stores metadata for TLD contracts.
-contract FlexiPunkMetadata is Ownable {
-  address public blastAddress = 0x4300000000000000000000000000000000000002;
-
+contract FlexiPunkMetadata {
   mapping (address => string) public descriptions; // TLD-specific descriptions, mapping(tldAddress => description)
   mapping (address => string) public brands; // TLD-specific brand names, mapping(tldAddress => brandName)
 
@@ -23,9 +21,9 @@ contract FlexiPunkMetadata is Ownable {
   event DescriptionChanged(address indexed user, string description);
 
   // CONSTRUCTOR
-  constructor(address _gov) {
-    IBlast(blastAddress).configureClaimableGas();
-    IBlast(blastAddress).configureGovernor(_gov);
+  constructor(address blastAddress_, address gov_) {
+    IBlast(blastAddress_).configureClaimableGas();
+    IBlast(blastAddress_).configureGovernor(gov_);
   }
 
   // READ
@@ -75,12 +73,5 @@ contract FlexiPunkMetadata is Ownable {
     require(msg.sender == getTldOwner(_tldAddress), "Sender not TLD owner");
     descriptions[_tldAddress] = _description;
     emit DescriptionChanged(msg.sender, _description);
-  }
-
-  // OWNER
-
-  // change governor
-  function setGovernor(address _gov) external onlyOwner {
-    IBlast(blastAddress).configureGovernor(_gov);
   }
 }
