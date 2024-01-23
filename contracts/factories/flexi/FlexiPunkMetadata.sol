@@ -4,16 +4,29 @@ pragma solidity ^0.8.4;
 import "base64-sol/base64.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+interface IBlast {
+  function configureClaimableGas() external;
+  function configureGovernor(address _governor) external;
+}
+
 /// @title Punk Domains TLD Metadata contract (Flexi)
 /// @author Tempe Techie
 /// @notice Contract that stores metadata for TLD contracts.
-contract FlexiPunkMetadata {
+contract FlexiPunkMetadata is Ownable {
+  address public blastAddress = 0x4300000000000000000000000000000000000002;
+
   mapping (address => string) public descriptions; // TLD-specific descriptions, mapping(tldAddress => description)
   mapping (address => string) public brands; // TLD-specific brand names, mapping(tldAddress => brandName)
 
   // EVENTS
   event BrandChanged(address indexed user, string brand);
   event DescriptionChanged(address indexed user, string description);
+
+  // CONSTRUCTOR
+  constructor(address _gov) {
+    IBlast(blastAddress).configureClaimableGas();
+    IBlast(blastAddress).configureGovernor(_gov);
+  }
 
   // READ
   function getMetadata(string calldata _domainName, string calldata _tld, uint256 _tokenId) public view returns(string memory) {
@@ -62,5 +75,12 @@ contract FlexiPunkMetadata {
     require(msg.sender == getTldOwner(_tldAddress), "Sender not TLD owner");
     descriptions[_tldAddress] = _description;
     emit DescriptionChanged(msg.sender, _description);
+  }
+
+  // OWNER
+
+  // change governor
+  function setGovernor(address _gov) external onlyOwner {
+    IBlast(blastAddress).configureGovernor(_gov);
   }
 }

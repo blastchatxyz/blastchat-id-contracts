@@ -72,6 +72,13 @@ module.exports = {
       gas: "auto", // gas limit
       gasPrice: 1000000000, // 1 gwei
     },
+    blastSepolia: { // Blast testnet
+      url: 'https://sepolia.blast.io/',
+      chainId: 168587773,
+      accounts: [process.env.DEPLOYER_PRIVATE_KEY],
+      gas: "auto", // gas limit
+      gasPrice: 1000000000, // 1 gwei
+    },
     bitfinityTestnet: {
       url: 'https://testnet.bitfinity.network',
       chainId: 355113,
@@ -259,6 +266,7 @@ module.exports = {
       arbitrumTestnet: process.env.ARBISCAN_API_KEY,
       aurora: process.env.AURORASCAN_API_KEY,
       auroraTestnet: process.env.AURORASCAN_API_KEY,
+      blastSepolia: "randomstring",
       base: process.env.BASESCAN_API_KEY,
       baseTestnet: process.env.BASESCAN_API_KEY,
       bsc: process.env.BSC_API_KEY,
@@ -301,6 +309,14 @@ module.exports = {
         urls: {
           apiURL: "https://api-nova.arbiscan.io/api",
           browserURL: "https://nova.arbiscan.io"
+        }
+      },
+      {
+        network: "blastSepolia",
+        chainId: 168587773,
+        urls: {
+          apiURL: "https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan",
+          browserURL: "https://testnet.blastscan.io"
         }
       },
       /* */
