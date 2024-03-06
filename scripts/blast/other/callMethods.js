@@ -1,4 +1,4 @@
-// npx hardhat run scripts/blast/other/callMethods.js --network blastSepolia
+// npx hardhat run scripts/blast/other/callMethods.js --network blast
 
 const forbiddenAddress = "";
 const factoryAddress = "";

@@ -1,9 +1,10 @@
 // Deploy metadata contract
-// npx hardhat run scripts/blast/6_deployStatsMiddleware.js --network blastSepolia
+// npx hardhat run scripts/blast/6_deployStatsMiddleware.js --network blast
 
 const blastAddress = "0x4300000000000000000000000000000000000002";
-const blastGovernor = "0xC6c17896fa051083324f2aD0Ed4555dC46D96E7f";
-const statsAddress = "0x1D882E64bb7f4D49e67018d81254236A2A6465a3";
+const blastGovernor = "0xA33dCbE04278706248891931537Dd56B795c3663";
+const statsAddress = "";
+const managerAddress = ""; // TODO: add iggy address here
 
 async function main() {
   const contractName = "StatsMiddleware";
@@ -22,6 +23,10 @@ async function main() {
   );
 
   await instance.deployed();
+
+  // add manager address
+  const tx1 = await instance.addManager(managerAddress);
+  await tx1.wait();
 
   // create stats contract
   const stats = await ethers.getContractFactory("Stats");

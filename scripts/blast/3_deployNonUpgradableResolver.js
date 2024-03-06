@@ -1,5 +1,5 @@
 // Deploy non-upgradable version of Resolver
-// npx hardhat run scripts/blast/3_deployNonUpgradableResolver.js --network blastSepolia
+// npx hardhat run scripts/blast/3_deployNonUpgradableResolver.js --network blast
 
 async function main() {
   const contractName = "PunkResolverNonUpgradable";

@@ -9,10 +9,10 @@ switch (network.config.chainId) {
     forbAddress = "0xf51f7a532a2aadfe8e2320bf5ba8275503bb3789";
     break;
   case 10: // optimism
-    forbAddress = "0xc6c17896fa051083324f2ad0ed4555dc46d96e7f";
+    forbAddress = "0xA33dCbE04278706248891931537Dd56B795c3663";
     break;
   case 137: // polygon
-    forbAddress = "0xc6c17896fa051083324f2ad0ed4555dc46d96e7f";
+    forbAddress = "0xA33dCbE04278706248891931537Dd56B795c3663";
     break;
   case 42161: // arbitrum
     forbAddress = "0xf51f7a532a2aadfe8e2320bf5ba8275503bb3789";
@@ -22,7 +22,7 @@ switch (network.config.chainId) {
     forbAddress = "0xea2f99fe93e5d07f61334c5eb9c54c5d5c957a6a";
     break;
   case 69: // optimism testnet
-    forbAddress = "0xc6c17896fa051083324f2ad0ed4555dc46d96e7f";
+    forbAddress = "0xA33dCbE04278706248891931537Dd56B795c3663";
     break;
   case 80001: // mumbai
     forbAddress = "0xf81dfed588af7be10ba095fb9e31ce3333b8618c";

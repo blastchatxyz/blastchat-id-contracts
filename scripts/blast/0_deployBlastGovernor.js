@@ -1,5 +1,5 @@
 // Deploy FlexiPunkMetadata contract
-// npx hardhat run scripts/blast/0_deployBlastGovernor.js --network blastSepolia
+// npx hardhat run scripts/blast/0_deployBlastGovernor.js --network blast
 
 const blastAddress = "0x4300000000000000000000000000000000000002";
 const feeReceiver = "0xE08033d0bDBcEbE7e619c3aE165E7957Ab577961";

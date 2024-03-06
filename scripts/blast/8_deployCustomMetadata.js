@@ -1,5 +1,5 @@
 // Deploy FlexiPunkMetadata contract
-// npx hardhat run scripts/blast/8_deployCustomMetadata.js --network blastSepolia
+// npx hardhat run scripts/blast/8_deployCustomMetadata.js --network blast
 
 const tldAddress = "0x32749Ab66ef1B85aFfF3425d5766d8025E407769";
 

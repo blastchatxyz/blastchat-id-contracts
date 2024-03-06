@@ -1,10 +1,10 @@
-// npx hardhat run scripts/blast/7_deployMinter.js --network blastSepolia
+// npx hardhat run scripts/blast/7_deployMinter.js --network blast
 // it automatically adds minter address to the TLD contract as minter
 
 const contractNameFactory = "BlastChatIdMinter";
 
 const blastAddress = "0x4300000000000000000000000000000000000002";
-const blastGovernor = "0xC6c17896fa051083324f2aD0Ed4555dC46D96E7f";
+const blastGovernor = "0xA33dCbE04278706248891931537Dd56B795c3663";
 const statsAddress = "0x1f8cf0bc042308677838fB50f264992A4e783610"; // stats middleware contract address
 
 const distributorAddress = "0xb29050965A5AC70ab487aa47546cdCBc97dAE45D";

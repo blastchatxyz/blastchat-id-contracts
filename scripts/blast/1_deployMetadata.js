@@ -1,8 +1,8 @@
 // Deploy FlexiPunkMetadata contract
-// npx hardhat run scripts/blast/1_deployMetadata.js --network blastSepolia
+// npx hardhat run scripts/blast/1_deployMetadata.js --network blast
 
 const blastAddress = "0x4300000000000000000000000000000000000002";
-const blastGovernor = "0xC6c17896fa051083324f2aD0Ed4555dC46D96E7f";
+const blastGovernor = "0xA33dCbE04278706248891931537Dd56B795c3663";
 
 async function main() {
   const contractName = "FlexiPunkMetadata";

@@ -1,4 +1,4 @@
-// Run: npx hardhat run scripts/blast/verify/manualTldVerification.js --network blastSepolia
+// Run: npx hardhat run scripts/blast/verify/manualTldVerification.js --network blast
 
 const networkName = "blastSepolia";
 const tldAddress = "0x32749Ab66ef1B85aFfF3425d5766d8025E407769";
