@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.4;
 
-import { OwnableWithManagers } from "../access/OwnableWithManagers.sol";
+import { OwnableWithManagers } from "../../access/OwnableWithManagers.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../lib/strings.sol";
+import "../../lib/strings.sol";
 
 interface IBlast {
   function configureClaimableGas() external;
@@ -26,9 +26,10 @@ interface ITldStats {
   function addWeiSpent(address _user, uint256 _weiSpent) external;
 }
 
-// BlastSniperz ID minter contract
+// BlastChat ID minter contract
 contract BlastSniperzIdMinter is OwnableWithManagers, ReentrancyGuard {
   address public distributorAddress; // revenue distributor contract address
+  address public immutable nftAddress; // BlastSniperz NFT contract address
   address public statsAddress; // stats contract address
 
   bool public paused = false;
@@ -44,9 +45,11 @@ contract BlastSniperzIdMinter is OwnableWithManagers, ReentrancyGuard {
 
   IFlexiPunkTLD public immutable tldContract;
 
+  mapping (uint256 => bool) public alreadyMinted; // mapping of NFT IDs that already minted a domain
+
   // CONSTRUCTOR
   constructor(
-    address _blastAddress, 
+    address _nftAddress, 
     address _distributorAddress,
     address _gov,
     address _statsAddress,
@@ -57,9 +60,10 @@ contract BlastSniperzIdMinter is OwnableWithManagers, ReentrancyGuard {
     uint256 _price4char,
     uint256 _price5char
   ) {
-    IBlast(_blastAddress).configureClaimableGas();
-    IBlast(_blastAddress).configureGovernor(_gov);
+    IBlast(0x4300000000000000000000000000000000000002).configureClaimableGas();
+    IBlast(0x4300000000000000000000000000000000000002).configureGovernor(_gov);
 
+    nftAddress = _nftAddress;
     distributorAddress = _distributorAddress;
     statsAddress = _statsAddress;
     tldContract = IFlexiPunkTLD(_tldAddress);
@@ -73,6 +77,23 @@ contract BlastSniperzIdMinter is OwnableWithManagers, ReentrancyGuard {
 
   // WRITE
 
+  /// @notice Domain minting function for BlastSniperz NFT holders
+  function holderFreeMint(
+    string memory _domainName,
+    address _domainHolder,
+    uint256 _nftId
+  ) external nonReentrant returns(uint256 tokenId) {
+    require(!paused, "Minting paused");
+    require(!alreadyMinted[_nftId], "Already minted a domain");
+    require(IERC721(nftAddress).ownerOf(_nftId) == msg.sender, "Not the owner of the NFT");
+
+    alreadyMinted[_nftId] = true;
+
+    // mint a domain
+    tokenId = tldContract.mint{value: 0}(_domainName, _domainHolder, address(0));
+  }
+
+  /// @notice Public domain minting function
   function mint(
     string memory _domainName,
     address _domainHolder,

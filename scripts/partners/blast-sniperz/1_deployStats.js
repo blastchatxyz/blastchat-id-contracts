@@ -1,11 +1,11 @@
-// Deploy FlexiPunkMetadata contract
-// npx hardhat run scripts/blast/0_deployBlastGovernor.js --network blast
+// Deploy metadata contract
+// npx hardhat run scripts/partners/blast-sniperz/1_deployStats.js --network blast
 
 const blastAddress = "0x4300000000000000000000000000000000000002";
-const feeReceiver = "0xAf8f43705B2642E8f15393485F7308C2b37C503F";
+const blastGovernor = "0x7A84e7f48DCe4ab212c3511eC5ade0982eaBa8c4";
 
 async function main() {
-  const contractName = "BlastGovernor";
+  const contractName = "Stats";
 
   const [deployer] = await ethers.getSigners();
 
@@ -16,13 +16,15 @@ async function main() {
   const contract = await ethers.getContractFactory(contractName);
   const instance = await contract.deploy(
     blastAddress,
-    feeReceiver
+    blastGovernor
   );
-  
-  console.log(contractName, "contract address:", instance.address);
 
-  console.log("Wait a minute and then run this command to verify contracts on Etherscan:");
-  console.log("npx hardhat verify --network " + network.name + " " + instance.address + " " + blastAddress + " " + feeReceiver);
+  await instance.deployed();
+
+  console.log("Contract address:", instance.address);
+
+  console.log("Wait a minute and then run this command to verify contracts on block explorer:");
+  console.log("npx hardhat verify --network " + network.name + " " + instance.address + " " + blastAddress + " " + blastGovernor);
 }
 
 main()

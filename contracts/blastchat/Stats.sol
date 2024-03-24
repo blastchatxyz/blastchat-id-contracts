@@ -9,7 +9,7 @@ interface IBlast {
 }
 
 /** 
-@title Iggy Stats
+@title Stats contract
 @author Tempe Techie
 */
 contract Stats is OwnableWithManagers {

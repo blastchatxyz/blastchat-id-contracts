@@ -49,23 +49,23 @@ contract BlastGovernor is OwnableWithManagers {
   // OWNER
 
   /// @notice Change blast address
-  function changeBlastAddress(address _newBlastAddress) external onlyManagerOrOwner {
+  function changeBlastAddress(address _newBlastAddress) external onlyOwner {
     IBlast(_newBlastAddress).configureClaimableGas();
     blastAddress = _newBlastAddress;
   }
 
   /// @notice Change fee receiver
-  function changeFeeReceiver(address _newFeeReceiver) external onlyManagerOrOwner {
+  function changeFeeReceiver(address _newFeeReceiver) external onlyOwner {
     feeReceiver = _newFeeReceiver;
   }
 
   /// @notice Change governor in a given smart contract
-  function changeGovernorInContract(address _newGovernor, address _contractAddress) external onlyManagerOrOwner {
+  function changeGovernorInContract(address _newGovernor, address _contractAddress) external onlyOwner {
     IBlast(blastAddress).configureGovernorOnBehalf(_newGovernor, _contractAddress);
   }
 
   /// @notice Change governor in multiple smart contracts
-  function changeGovernorInMultipleContracts(address _newGovernor, address[] calldata _contractAddresses) external onlyManagerOrOwner {
+  function changeGovernorInMultipleContracts(address _newGovernor, address[] calldata _contractAddresses) external onlyOwner {
     uint256 cLength = _contractAddresses.length;
 
     for (uint256 i = 0; i < cLength;) {
